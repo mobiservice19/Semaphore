@@ -1,0 +1,23 @@
+apiVersion: v2
+name: semaphore
+description: Ansible Semaphore is a modern open-source UI for Ansible.
+  If your project has expanded beyond the scope of manual terminal deployment, 
+  Ansible Semaphore is the ideal solution for you.
+
+home: https://www.ansible-semaphore.com
+icon: https://github.com/ansible-semaphore/semaphore/raw/-/semaphore.png
+
+type: application
+
+keywords:
+- semaphore
+- ansible
+- webUI
+
+kubeVersion: '>= 1.16.0-0'
+version: 0.1.0
+appVersion: "v2.9.18"
+
+sources:
+- https://github.com/ansible-semaphore/semaphore
+- https://hub.docker.com/r/semaphoreui/semaphore

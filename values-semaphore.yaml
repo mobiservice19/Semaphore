@@ -1,0 +1,204 @@
+# Default values for semaphore.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: semaphoreui/semaphore
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v2.9.18"
+
+imagePullSecrets: []
+nameOverride: "semaphore"
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containersSpec:
+  command: []
+  args: []
+
+env:
+  - name: SEMAPHORE_DB_DIALECT
+    value: postgres
+  - name: SEMAPHORE_PLAYBOOK_PATH
+    value: /tmp/semaphore/
+  - name: SEMAPHORE_ADMIN_NAME
+    value: semaphore
+  - name: SEMAPHORE_ADMIN_EMAIL
+    value: admin@localhost
+  # if you wish to use ldap, set to: 'yes' 
+  - name: SEMAPHORE_LDAP_ACTIVATED
+    value: 'no'
+  # all next secret values from semaphore-secret
+  - name: SEMAPHORE_DB_USER
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_DB_USER
+  - name: SEMAPHORE_DB_PASS
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_DB_PASS
+  - name: SEMAPHORE_DB_HOST
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_DB_HOST
+  - name: SEMAPHORE_DB_PORT
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_DB_PORT
+  - name: SEMAPHORE_DB
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_DB
+  - name: SEMAPHORE_ADMIN
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_ADMIN
+  - name: SEMAPHORE_ADMIN_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_ADMIN_PASSWORD
+  - name: SEMAPHORE_ACCESS_KEY_ENCRYPTION
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_ACCESS_KEY_ENCRYPTION
+  - name: SEMAPHORE_LDAP_HOST
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_HOST
+  - name: SEMAPHORE_LDAP_PORT
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_PORT
+  - name: SEMAPHORE_LDAP_NEEDTLS
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_NEEDTLS
+  - name: SEMAPHORE_LDAP_DN_BIND
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_DN_BIND
+  - name: SEMAPHORE_LDAP_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_PASSWORD
+  - name: SEMAPHORE_LDAP_DN_SEARCH
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_DN_SEARCH
+  - name: SEMAPHORE_LDAP_SEARCH_FILTER
+    valueFrom:
+      secretKeyRef:
+        name: semaphore-secret
+        key: SEMAPHORE_LDAP_SEARCH_FILTER
+
+ports:
+  - name: http
+    containerPort: 3000
+    protocol: TCP
+
+probe:
+  enabled: true
+
+  readinessProbe:
+    tcpSocket:
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+  livenessProbe:
+    failureThreshold: 5
+    httpGet:
+      path: /
+      port: http
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+    initialDelaySeconds: 60
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3000
+  annotations: {}
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "3000"
+    # prometheus.io/scrape: "true"
+
+ingress:
+  enabled: true
+  className: nginx-ha
+  annotations:
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+    nginx.ingress.kubernetes.io/auth-secret: semaphore-basic-auth-secret
+  hosts:
+    - host: semaphore-billing-gsc.corp.tele2.ru
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
