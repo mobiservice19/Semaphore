@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+namespace: semaphore
+
 replicaCount: 1
 
 image:
@@ -14,6 +16,11 @@ imagePullSecrets: []
 nameOverride: "semaphore"
 fullnameOverride: ""
 
+strategyUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+  type: RollingUpdate
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -21,7 +28,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: "semaphore-sa"
 
 podAnnotations: {}
 
@@ -31,9 +38,9 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
 
-containersSpec:
-  command: []
-  args: []
+containersSpec: []
+  # command: []
+  # args: []
 
 env:
   - name: SEMAPHORE_DB_DIALECT
@@ -43,7 +50,7 @@ env:
   - name: SEMAPHORE_ADMIN_NAME
     value: semaphore
   - name: SEMAPHORE_ADMIN_EMAIL
-    value: admin@localhost
+    value: admin@semaphore.local
   # if you wish to use ldap, set to: 'yes' 
   - name: SEMAPHORE_LDAP_ACTIVATED
     value: 'no'
@@ -124,6 +131,20 @@ env:
         name: semaphore-secret
         key: SEMAPHORE_LDAP_SEARCH_FILTER
 
+extraConfigmapMounts:
+  - name: playbook
+    mountPath: /tmp/semaphore/
+  #   configMap: configmap-semaphore
+  #   readOnly: true
+
+extraVolumeMounts: {}
+  # - name: configmap-semaphore
+  #   configMap:
+  #     name: configmap-semaphore
+  # - name: semaphore-secret
+  #   secret:
+  #     secretName: semaphore-secret
+
 ports:
   - name: http
     containerPort: 3000
@@ -155,6 +176,27 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+
+extraInitContainers: []
+  # - name: prepare
+  #   image: busybox:1.34.1
+  #   imagePullPolicy: "IfNotPresent"
+  #   command:
+  #     - sh
+  #     - -c
+  #     - |
+  #       sed -e "s/\$login/$(cat /mnt/secrets-store/login)/" \
+  #           -e "s/\$password/$(cat /mnt/secrets-store/password)/" \
+  #           /mnt-template/MibExporter.tmpl > /mnt/MibExporter.json
+  #       echo "Done"
+  #   volumeMounts:
+  #     - name: secrets-store-inline
+  #       mountPath: "/mnt/secrets-store"
+  #       readOnly: true
+  #     - name: config
+  #       mountPath: "/mnt"
+  #     - name: configmap-tmpl
+  #       mountPath: "/mnt-template"
 
 service:
   type: ClusterIP
