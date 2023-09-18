@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.extraVolume.persistentVolumeClaim.claimName }}
+  name: {{ .Values.persistentVolumeClaim.name }}
   namespace: {{ .Values.namespace }}
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}

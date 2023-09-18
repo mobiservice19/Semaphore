@@ -149,10 +149,11 @@ autoscaling:
 
 persistentVolumeClaim:
   enabled: true
+  name: semaphore-pvc
   storageClass: ""
   accessModes: 
     - ReadWriteOnce
-  storage: 10Gi
+  storage: 1Gi
 
 nodeSelector: {}
 
