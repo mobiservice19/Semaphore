@@ -162,12 +162,13 @@ probe:
   livenessProbe:
     failureThreshold: 5
     httpGet:
-      path: /
       port: http
+      path: /
+      scheme: HTTP
     periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 10
-    initialDelaySeconds: 60
+    initialDelaySeconds: 10
 
 securityContext: {}
   # capabilities:
