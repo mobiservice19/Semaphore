@@ -33,117 +33,33 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext:
-  runAsUser: 1000
+  runAsUser: 1001
   runAsNonRoot: true
-  runAsGroup: 1000
-  fsGroup: 1000
+  # runAsGroup: 1001
+  # fsGroup: 1001
 
 containersSpec: []
   # command: []
   # args: []
 
+extraEnv:
+  - secretRef:
+      name: semaphore-secret
+  - configMapRef:
+      name: semaphore-configmap
+
 env:
-  - name: SEMAPHORE_DB_DIALECT
-    value: postgres
   - name: SEMAPHORE_PLAYBOOK_PATH
     value: /tmp/semaphore/
-  - name: SEMAPHORE_ADMIN_NAME
-    value: semaphore
-  - name: SEMAPHORE_ADMIN_EMAIL
-    value: admin@semaphore.local
-  # if you wish to use ldap, set to: 'yes' 
-  - name: SEMAPHORE_LDAP_ACTIVATED
-    value: 'no'
-  # all next secret values from semaphore-secret
-  - name: SEMAPHORE_DB_USER
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_DB_USER
-  - name: SEMAPHORE_DB_PASS
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_DB_PASS
-  - name: SEMAPHORE_DB_HOST
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_DB_HOST
-  - name: SEMAPHORE_DB_PORT
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_DB_PORT
-  - name: SEMAPHORE_DB
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_DB
-  - name: SEMAPHORE_ADMIN
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_ADMIN
-  - name: SEMAPHORE_ADMIN_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_ADMIN_PASSWORD
-  - name: SEMAPHORE_ACCESS_KEY_ENCRYPTION
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_ACCESS_KEY_ENCRYPTION
-  - name: SEMAPHORE_LDAP_HOST
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_HOST
-  - name: SEMAPHORE_LDAP_PORT
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_PORT
-  - name: SEMAPHORE_LDAP_NEEDTLS
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_NEEDTLS
-  - name: SEMAPHORE_LDAP_DN_BIND
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_DN_BIND
-  - name: SEMAPHORE_LDAP_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_PASSWORD
-  - name: SEMAPHORE_LDAP_DN_SEARCH
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_DN_SEARCH
-  - name: SEMAPHORE_LDAP_SEARCH_FILTER
-    valueFrom:
-      secretKeyRef:
-        name: semaphore-secret
-        key: SEMAPHORE_LDAP_SEARCH_FILTER
 
-extraConfigmapMounts:
+extraVolumeMounts:
   - name: playbook
     mountPath: /tmp/semaphore/
-  #   configMap: configmap-semaphore
-  #   readOnly: true
 
-extraVolumeMounts: {}
-  # - name: configmap-semaphore
-  #   configMap:
-  #     name: configmap-semaphore
-  # - name: semaphore-secret
-  #   secret:
-  #     secretName: semaphore-secret
+extraVolume:
+  - name: playbook
+    persistentVolumeClaim:
+      claimName: semaphore-pvc
 
 ports:
   - name: http
@@ -230,6 +146,13 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+persistentVolumeClaim:
+  enabled: true
+  storageClass: ""
+  accessModes: 
+    - ReadWriteOnce
+  storage: 10Gi
 
 nodeSelector: {}
 

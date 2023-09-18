@@ -1,0 +1,19 @@
+{{- if .Values.persistentVolumeClaim.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "semaphore.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "semaphore.labels" . | nindent 4 }}
+spec:
+{{- with .Values.persistentVolumeClaim }}
+  storageClassName: {{ .storageClass }}
+  accessModes:
+    {{- toYaml .accessModes | nindent 4  }}
+  resources:
+    requests:
+      storage: {{ .storage }}
+{{- end }}
+{{- end }}
