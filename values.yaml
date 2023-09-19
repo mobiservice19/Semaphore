@@ -224,12 +224,19 @@ extraConfigMap:
   adminNickName: admin
   adminEmail: admin@localhost
   loginAdmin: admin
-  ldapActivated: no
+  ldapActivated: no # for activate use - "yes"
   ldapHost: dc01.local.example.com
   ldapPort: 636
-  ldapNeedTls: yes
+  ldapNeedTls: "yes"
   ldapDnBind: uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net
   ldapDnSearch: dc=local,dc=example,dc=com
   ldapSearchFilter: (\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))
 
-# Custom secret
+# Custom Secret
+extraSecret:
+  dbPassword: password-for-db
+  adminPassword: adminPassword
+  # Generate: cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32 | base64
+  # LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 | xargs
+  keyEncryption: ""
+  ldapPassword: ""
