@@ -236,7 +236,7 @@ extraConfigMap:
 extraSecret:
   dbPassword: password-for-db
   adminPassword: adminPassword
-  # Generate: cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32 | base64
+  # Generate: cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32
   # LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 | xargs
   keyEncryption: ""
   ldapPassword: ""
