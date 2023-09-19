@@ -26,3 +26,4 @@ appVersion: "v2.9.18"
 sources:
 - https://github.com/ansible-semaphore/semaphore
 - https://hub.docker.com/r/semaphoreui/semaphore
+- https://github.com/mobiservice19/Semaphore/
