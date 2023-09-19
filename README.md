@@ -12,7 +12,16 @@
 
 #### Add repo semaphore
 ```bash
-helm repo add semaphore https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.1.0.tgz
+helm repo add semaphore https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts
+```
+
+#### HELM REPO UPDATE
+```bash
+helm repo update
+```
+#### HELM SEARCH
+```bash
+helm search repo | grep semaphore
 ```
 
 #### Pull default values from HELM Chart semaphore
@@ -24,4 +33,3 @@ helm show values semaphore > values.yaml
 ```bash
 helm install semaphore semaphore -f values.yaml
 ```
-
