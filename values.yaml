@@ -2,25 +2,43 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-namespace: semaphore
+# Namespace name whose default is the chart Chart.name
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+namespace: ""
 
+# Replica count
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 replicaCount: 1
 
+# Container Image Parameters
+# https://kubernetes.io/docs/concepts/containers/images/
 image:
   repository: semaphoreui/semaphore
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+# Pull an Image from a Private Registry
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
-nameOverride: "semaphore"
+#  - name: MySecret
+
+# String for overrides release name whose default is the semaphore.fullname
+nameOverride: ""
 fullnameOverride: ""
 
+# Update strategy whose default is the RollingUpdate. 
+# https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/
 strategyUpdate:
+  # Minimal replica count during the update
   maxSurge: 1
+  # Maximum replica count unavailable during the update
   maxUnavailable: 1
+  # Can be "Recreate" or "RollingUpdate"
   type: RollingUpdate
 
+# Service Accounts
+# https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -30,42 +48,56 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: "semaphore-sa"
 
+# Custom pod annotations
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
 
+# Configure a Security Context for a Pod or Container
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext:
   runAsUser: 1001
   runAsNonRoot: true
   # runAsGroup: 1001
   # fsGroup: 1001
 
+# Custom commands and arguments
 containersSpec: []
   # command: []
   # args: []
 
+# Add extra environments variables from ConfigMap and Secret
 extraEnv:
   - secretRef:
       name: semaphore-secret
   - configMapRef:
       name: semaphore-configmap
 
+# Environment variables
 env:
   - name: SEMAPHORE_PLAYBOOK_PATH
     value: /tmp/semaphore/
 
+# Add extra molume mounts
 extraVolumeMounts:
   - name: playbook
     mountPath: /tmp/semaphore/
 
+# Add extra volume
 extraVolume:
   - name: playbook
     persistentVolumeClaim:
-      claimName: semaphore-pvc
+      # Persistent Volume Claim name whose default is the {{ .Chart.Name }}
+      claimName: "semaphore-pvc"
 
+# Ports and Protocols
+# https://kubernetes.io/docs/reference/networking/ports-and-protocols/
 ports:
   - name: http
     containerPort: 3000
     protocol: TCP
 
+# Configure Liveness, Readiness and Startup Probes
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 probe:
   enabled: true
 
@@ -86,6 +118,8 @@ probe:
     timeoutSeconds: 10
     initialDelaySeconds: 10
 
+# Configure a Security Context for a Pod or Container
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 securityContext: {}
   # capabilities:
   #   drop:
@@ -94,6 +128,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# Add extra init containers
+# https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 extraInitContainers: []
   # - name: prepare
   #   image: busybox:1.34.1
@@ -112,13 +148,17 @@ extraInitContainers: []
   #     - name: configmap-semaphore
   #       mountPath: "/mnt-template"
 
+# Configuration service for semaphore
 service:
   type: ClusterIP
   port: 3000
   annotations: {}
 
+# Configuration ingress for semaphore
 ingress:
-  enabled: true
+  # On defaults ingress disabled
+  enabled: false
+  # Be sure to fill in if you use ingress
   className: ""
   annotations: {}
   hosts:
@@ -127,11 +167,13 @@ ingress:
         - path: /
           pathType: Prefix
 
+  # If use SSL connection
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+# Resource definition
 resources: {}
   # limits:
   #   cpu: 500m
@@ -140,13 +182,17 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# Horizontal Pod Autoscaling
+# https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 autoscaling:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
+  # minReplicas: 1
+  # maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# Persistent Volume Claim
+# https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 persistentVolumeClaim:
   enabled: true
   name: semaphore-pvc
@@ -155,8 +201,35 @@ persistentVolumeClaim:
     - ReadWriteOnce
   storage: 1Gi
 
+# NodeSelector is the simplest recommended form of node selection constraint. 
+# You can add the nodeSelector field to your Pod specification and specify the node labels you want the target node to have. 
+# Kubernetes only schedules the Pod onto nodes that have each of the labels you specify.
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
 
+# Taints and Tolerations
+# https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
 tolerations: []
 
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
 affinity: {}
+
+# Custom ConfigMap
+extraConfigMap:
+  dbUser: semaphore
+  dbHost: postgres.local
+  dbPort: 5432
+  dbDialect: postgres
+  dbName: semaphore
+  adminNickName: admin
+  adminEmail: admin@localhost
+  loginAdmin: admin
+  ldapActivated: no
+  ldapHost: dc01.local.example.com
+  ldapPort: 636
+  ldapNeedTls: yes
+  ldapDnBind: uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net
+  ldapDnSearch: dc=local,dc=example,dc=com
+  ldapSearchFilter: (\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))
+
+# Custom secret

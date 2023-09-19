@@ -2,22 +2,24 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "semaphore.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.namespace | default .Chart.Name }}
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}
 data:
-  SEMAPHORE_DB_USER: "semaphore"
-  SEMAPHORE_DB_HOST: "postgres"
-  SEMAPHORE_DB_PORT: "5432"
-  SEMAPHORE_DB_DIALECT: "postgres"
-  SEMAPHORE_DB: "semaphore"
-  SEMAPHORE_ADMIN_NAME: "admin"
-  SEMAPHORE_ADMIN_EMAIL: "admin@localhost"
-  SEMAPHORE_ADMIN: admin
-  SEMAPHORE_LDAP_ACTIVATED: 'no'
-  # SEMAPHORE_LDAP_HOST: dc01.local.example.com
-  # SEMAPHORE_LDAP_PORT: '636'
-  # SEMAPHORE_LDAP_NEEDTLS: 'yes'
-  # SEMAPHORE_LDAP_DN_BIND: 'uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net'
-  # SEMAPHORE_LDAP_DN_SEARCH: 'dc=local,dc=example,dc=com'
-  # SEMAPHORE_LDAP_SEARCH_FILTER: "(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))"
+  SEMAPHORE_DB_USER: '{{ .Values.extraConfigMap.dbUser | default "semaphore" }}'
+  SEMAPHORE_DB_HOST: '{{ .Values.extraConfigMap.dbHost | default "postgres" }}'
+  SEMAPHORE_DB_PORT: '{{ .Values.extraConfigMap.dbPort | default "5432" }}'
+  SEMAPHORE_DB_DIALECT: '{{ .Values.extraConfigMap.dbDialect | default "postgres" }}'
+  SEMAPHORE_DB: '{{ .Values.extraConfigMap.dbName | default "postgres" }}'
+  SEMAPHORE_ADMIN_NAME: '{{ .Values.extraConfigMap.adminNickName | default "SemaphoreAdmin" }}'
+  SEMAPHORE_ADMIN_EMAIL: '{{ .Values.extraConfigMap.adminEmail | default "admin@localhost" }}'
+  SEMAPHORE_ADMIN: '{{ .Values.extraConfigMap.loginAdmin | default "admin" }}'
+  SEMAPHORE_LDAP_ACTIVATED: '{{ .Values.extraConfigMap.ldapActivated | default "no" }}'
+{{- if .Values.extraConfigMap.ldapActivated }}
+  SEMAPHORE_LDAP_HOST: '{{ .Values.extraConfigMap.ldapHost | default "dc01.local.example.com" }}'
+  SEMAPHORE_LDAP_PORT: '{{ .Values.extraConfigMap.ldapPort | default "636" }}'
+  SEMAPHORE_LDAP_NEEDTLS: '{{ .Values.extraConfigMap.ldapNeedTls | default "yes" }}'
+  SEMAPHORE_LDAP_DN_BIND: '{{ .Values.extraConfigMap.ldapDnBind | default "uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net" }}'
+  SEMAPHORE_LDAP_DN_SEARCH: '{{ .Values.extraConfigMap.ldapDnSearch | default "dc=local,dc=example,dc=com" }}'
+  SEMAPHORE_LDAP_SEARCH_FILTER: '{{ .Values.extraConfigMap.ldapSearchFilter | default "(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))" }}'
+{{- end }}

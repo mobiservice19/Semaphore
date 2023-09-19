@@ -7,6 +7,11 @@ description: Ansible Semaphore is a modern open-source UI for Ansible.
 home: https://www.ansible-semaphore.com
 icon: https://github.com/ansible-semaphore/semaphore/raw/-/semaphore.png
 
+maintainers:
+  - name: mobiservice19
+    email: mobiservice19@gmail.com
+    url: https://github.com/mobiservice19
+
 type: application
 
 keywords:

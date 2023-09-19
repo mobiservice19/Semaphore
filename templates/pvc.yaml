@@ -3,8 +3,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.persistentVolumeClaim.name }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.persistentVolumeClaim.name | default .Chart.Name }}
+  namespace: {{ .Values.namespace | default .Chart.Name }}
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}
 spec:
