@@ -231,9 +231,14 @@ extraConfigMap:
   ldapDnBind: uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net
   ldapDnSearch: dc=local,dc=example,dc=com
   ldapSearchFilter: (\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))
+  # For use mapping LDAP
+  ldapMappingEmail: mail
+  ldapMappingUsername: sAMAccountName
+  ldapMappingFullname: displayName
 
 # Custom Secret
 extraSecret:
+  createSecret: false # If use extraSecret "false"
   dbPassword: password-for-db
   adminPassword: adminPassword
   # Generate: cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32

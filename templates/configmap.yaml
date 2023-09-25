@@ -22,4 +22,7 @@ data:
   SEMAPHORE_LDAP_DN_BIND: '{{ .Values.extraConfigMap.ldapDnBind | default "uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net" }}'
   SEMAPHORE_LDAP_DN_SEARCH: '{{ .Values.extraConfigMap.ldapDnSearch | default "dc=local,dc=example,dc=com" }}'
   SEMAPHORE_LDAP_SEARCH_FILTER: '{{ .Values.extraConfigMap.ldapSearchFilter | default "(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))" }}'
+  SEMAPHORE_LDAP_MAPPING_EMAIL: '{{ .Values.extraConfigMap.ldapMappingEmail | default "mail" }}'
+  SEMAPHORE_LDAP_MAPPING_USERNAME: '{{ .Values.extraConfigMap.ldapMappingUsername | default "sAMAccountName" }}'
+  SEMAPHORE_LDAP_MAPPING_FULLNAME: '{{ .Values.extraConfigMap.ldapMappingFullname | default "displayName" }}'
 {{- end }}
