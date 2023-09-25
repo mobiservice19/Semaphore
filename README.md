@@ -26,10 +26,14 @@ helm search repo | grep semaphore
 
 #### Pull default values from HELM Chart semaphore
 ```bash
-helm show values semaphore > values.yaml
+helm show values semaphore/semaphore > values.yaml
 ```
 
 #### Install HELM Chart semaphore
 ```bash
-helm install semaphore semaphore -f values.yaml
+helm upgrade semaphore semaphore/semaphore \
+    --install \
+    --atomic \
+    --values values.yaml \
+    --debug
 ```
