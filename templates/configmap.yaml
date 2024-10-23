@@ -6,6 +6,10 @@ metadata:
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}
 data:
+  SEMAPHORE_WEB_ROOT: '{{ .Values.extraConfigMap.webPath | default "" }}'
+  SEMAPHORE_CONFIG_PATH: '{{ .Values.extraConfigMap.configPath | default "/tmp/semaphore/config" }}'
+  SEMAPHORE_TMP_PATH: '{{ .Values.extraConfigMap.configPath | default "/tmp/semaphore" }}'
+  SEMAPHORE_PLAYBOOK_PATH: '{{ .Values.extraConfigMap.playbookPath | default "/tmp/semaphore/playbook" }}'
   SEMAPHORE_DB_USER: '{{ .Values.extraConfigMap.dbUser | default "semaphore" }}'
   SEMAPHORE_DB_HOST: '{{ .Values.extraConfigMap.dbHost | default "postgres" }}'
   SEMAPHORE_DB_PORT: '{{ .Values.extraConfigMap.dbPort | default "5432" }}'
