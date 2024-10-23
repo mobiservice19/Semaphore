@@ -6,67 +6,51 @@ metadata:
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       {{- include "semaphore.selectorLabels" . | nindent 6 }}
   strategy:
-    {{- with .Values.strategyUpdate }}
+    type: {{ .Values.strategyUpdate.type | default "RollingUpdate" }}
     rollingUpdate:
-      maxSurge: {{ .maxSurge }}
-      maxUnavailable: {{ .maxUnavailable }}
-    type: {{ .type }}
-    {{- end }}
+      maxSurge: {{ .Values.strategyUpdate.maxSurge | default 1 }}
+      maxUnavailable: {{ .Values.strategyUpdate.maxUnavailable | default 0 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
       labels:
         {{- include "semaphore.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       serviceAccountName: {{ include "semaphore.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.extraInitContainers }}
-      {{- with .Values.extraInitContainers }}
       initContainers:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.extraInitContainers | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           {{- if .Values.containersSpec }}
-          command:
-            {{- toYaml .Values.containersSpec.command | nindent 12 }}
-          args:
-            {{- toYaml .Values.containersSpec.args | nindent 12 }}
+          command: 
+            {{- toYaml .Values.containersSpec.command | nindent 12 | default "[]" }}
+          args: 
+            {{- toYaml .Values.containersSpec.args | nindent 12 | default "[]" }}
           {{- end }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.extraEnv }}
+          {{- if .Values.extraEnv }}
           envFrom:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml .Values.extraEnv | nindent 12 }}
           {{- end }}
-          {{- with .Values.env }}
+          {{- if .Values.env }}
           env:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml .Values.env | nindent 12 }}
           {{- end }}
-          {{- with .Values.ports }}
           ports:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- toYaml .Values.ports | nindent 12 }}
           {{- if .Values.probe.enabled }}
           readinessProbe:
             {{- toYaml .Values.probe.readinessProbe | nindent 12 }}
@@ -74,32 +58,26 @@ spec:
             {{- toYaml .Values.probe.livenessProbe | nindent 12 }}
           {{- end }}
           {{- if .Values.resources }}
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
           {{- if .Values.extraVolumeMounts }}
-          {{- with .Values.extraVolumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
           {{- end }}
       {{- if .Values.extraVolume }}
-      {{- with .Values.extraVolume }}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.extraVolume | nindent 8 }}
       {{- end }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- if .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- if .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.affinity | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- if .Values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.tolerations | nindent 8 }}
       {{- end }}
