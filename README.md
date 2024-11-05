@@ -1,4 +1,9 @@
 # Semaphore
+###
+![GitHub last commit](https://img.shields.io/github/last-commit/mobiservice19/Semaphore)
+![GitHub repo size](https://img.shields.io/github/repo-size/mobiservice19/Semaphore)
+
+
 ### HELM CHART FOR USE TO KUBERNETES
 
 ## Sources
