@@ -20,8 +20,8 @@ keywords:
 - webUI
 
 kubeVersion: '>= 1.16.0-0'
-version: 0.3.0
-appVersion: "v2.10.22"
+version: 0.4.0
+appVersion: "v2.10.43"
 
 sources:
 - https://github.com/ansible-semaphore/semaphore
