@@ -2,8 +2,35 @@ apiVersion: v1
 entries:
   semaphore:
   - apiVersion: v2
+    appVersion: v2.10.43
+    created: "2024-12-17T16:08:39.289139026+03:00"
+    description: Ansible Semaphore is a modern open-source UI for Ansible. If your
+      project has expanded beyond the scope of manual terminal deployment, Ansible
+      Semaphore is the ideal solution for you.
+    digest: 7b429954937b5ae37dea28352c04bd9a4dc5cb2a0d32cd522a6e56ab6793b57b
+    home: https://www.ansible-semaphore.com
+    icon: https://github.com/ansible-semaphore/semaphore/raw/-/semaphore.png
+    keywords:
+    - semaphore
+    - ansible
+    - webUI
+    kubeVersion: '>= 1.16.0-0'
+    maintainers:
+    - email: mobiservice19@gmail.com
+      name: mobiservice19
+      url: https://github.com/mobiservice19
+    name: semaphore
+    sources:
+    - https://github.com/ansible-semaphore/semaphore
+    - https://hub.docker.com/r/semaphoreui/semaphore
+    - https://github.com/mobiservice19/Semaphore/
+    type: application
+    urls:
+    - https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
     appVersion: v2.10.22
-    created: "2024-10-23T10:39:18.341967488+03:00"
+    created: "2024-12-17T16:08:39.283702094+03:00"
     description: Ansible Semaphore is a modern open-source UI for Ansible. If your
       project has expanded beyond the scope of manual terminal deployment, Ansible
       Semaphore is the ideal solution for you.
@@ -30,7 +57,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: v2.9.18
-    created: "2024-10-23T10:39:18.338008105+03:00"
+    created: "2024-12-17T16:08:39.276740123+03:00"
     description: Ansible Semaphore is a modern open-source UI for Ansible. If your
       project has expanded beyond the scope of manual terminal deployment, Ansible
       Semaphore is the ideal solution for you.
@@ -53,11 +80,11 @@ entries:
     - https://github.com/mobiservice19/Semaphore/
     type: application
     urls:
-    - https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.3.0.tgz
+    - https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.2.0.tgz
     version: 0.2.0
   - apiVersion: v2
     appVersion: v2.9.18
-    created: "2024-10-23T10:39:18.333474125+03:00"
+    created: "2024-12-17T16:08:39.27087398+03:00"
     description: Ansible Semaphore is a modern open-source UI for Ansible. If your
       project has expanded beyond the scope of manual terminal deployment, Ansible
       Semaphore is the ideal solution for you.
@@ -80,6 +107,6 @@ entries:
     - https://github.com/mobiservice19/Semaphore/
     type: application
     urls:
-    - https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.3.0.tgz
+    - https://raw.githubusercontent.com/mobiservice19/Semaphore/main/charts/semaphore-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-23T10:39:18.328881844+03:00"
+generated: "2024-12-17T16:08:39.257848662+03:00"
