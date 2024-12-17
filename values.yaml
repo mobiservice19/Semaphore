@@ -2,10 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Namespace name whose default is the chart Chart.name
-# https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
-namespace: ""
-
 # Replica count
 # https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 replicaCount: 1
@@ -74,17 +70,17 @@ extraEnv:
 
 # Environment variables
 env:
-  - name: SEMAPHORE_PLAYBOOK_PATH
-    value: /tmp/semaphore/
+  - name: TZ
+    value: Europe/Moscow
 
 # Add extra molume mounts
 extraVolumeMounts:
-  - name: playbook
-    mountPath: /tmp/semaphore/
+  - name: data
+    mountPath: /semaphore
 
 # Add extra volume
 extraVolume:
-  - name: playbook
+  - name: data
     persistentVolumeClaim:
       # Persistent Volume Claim name whose default is the {{ .Chart.Name }}
       claimName: "semaphore-pvc"
@@ -216,36 +212,86 @@ affinity: {}
 
 # Custom ConfigMap
 extraConfigMap:
+# common
+  # Public address of the Semaphore server. For example, 'https://company.com/semaphore'.
   webPath: ""
-  configPath: /tmp/semaphore/config
-  tmpPath: /tmp/semaphore
-  playbookPath: /tmp/semaphore/playbook
+  # The port that the Semaphore server will listen on.
+  appPort: 3000
+  # The path to store temporary files
+  tmpPath: /semaphore/tmp
+  # Type of Git client. Can be 'cmd_git' or 'go_git'.
+  gitClient: cmd_git
+  # Max duration of a task in seconds.
+  maxTaskDurationSec: 3600
+  # Max number of parallel tasks that can be run on the server.
+  maxParrallelTasks: 10
+  # Deny password login.
+  passwordLoginDisabled: False
+  # Flag which enables remote runners.
+  useRemoteRunner: False
+  # Token which allows register new runners.
+  runnerRegistrationToken: ""
+  # Allow non-admin users to create projects.
+  nonAdminCanCreateProject: True
+  # Avoid host key checking by the tools Ansible uses to connect to the host.
+  ansibleHostKeyChecking: True
+# database settings
+  # DB User
   dbUser: semaphore
+  # DB Host
   dbHost: postgres.local
+  # DB Port
   dbPort: 5432
+  # DB Dialect (bolt/mysql/postgres)
   dbDialect: postgres
+  # DB Name
   dbName: semaphore
-  adminNickName: admin
-  adminEmail: admin@localhost
+# app
   loginAdmin: admin
-  ldapActivated: no # for activate use - "yes"
-  ldapHost: dc01.local.example.com
-  ldapPort: 636
-  ldapNeedTls: "yes"
-  ldapDnBind: uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net
-  ldapDnSearch: dc=local,dc=example,dc=com
-  ldapSearchFilter: (\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))
-  # For use mapping LDAP
-  ldapMappingEmail: mail
-  ldapMappingUsername: sAMAccountName
-  ldapMappingFullname: displayName
-
-# Custom Secret
+  adminNickName: ADMIN
+  adminEmail: admin@localhost
+# email
+  # Flag which enables email alerts.
+  emailAlert: False
+  # Email address of the sender.
+  emailSender: semaphore@localhost
+  # SMTP server hostname.
+  emailHost: smtp.mail.ru
+  # SMTP server port.
+  emailPort: 25
+  # Username for SMTP server authentication.
+  emailUsername: semaphore
+  # Use SSL or TLS for communication with the SMTP server.
+  emailSecure: False
+# LDAP
+  ldapEnable: False
+  ldapServer: ldap.example.com:636
+  ldapNeedTls: True
+  ldapBindDn: uid=ldap_user,cn=users,dc=example,dc=com
+  ldapSearchDn: dc=example,dc=com
+  ldapSearchFilter: (\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=example,dc=com))
+  ldapNeedTls: True
+# For use mapping LDAP
+  ldapMappingDn: displayName
+  ldapMappingMail: mail
+  ldapMappingUid: sAMAccountName
+  ldapMappingCn: cn
+# Use Telegram Alerts
+  telegramAlert: False
+  telegramChat: "your_chat_id"
+# custom secret
 extraSecret:
-  createSecret: false # If use extraSecret "false"
+  createSecret: True 
+# security
+  # If use extraSecret "false"
   dbPassword: password-for-db
-  adminPassword: adminPassword
+  adminPassword: password-for-user-admin
+  # Password for SMTP server authentication.
+  emailPassword: password-for-email
   # Generate: cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32
   # LC_CTYPE=C tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= < /dev/urandom | head -c 32 | xargs
+  cookieHash: ""
+  cookieEncryption: ""
   keyEncryption: ""
-  ldapPassword: ""
+  ldapPassword: "password-for-ldap"
+  telegramToken: "your_telegram_token"
