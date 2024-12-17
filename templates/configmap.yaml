@@ -6,26 +6,47 @@ metadata:
     {{- include "semaphore.labels" . | nindent 4 }}
 data:
   SEMAPHORE_WEB_ROOT: '{{ .Values.extraConfigMap.webPath | default "" }}'
-  SEMAPHORE_CONFIG_PATH: '{{ .Values.extraConfigMap.configPath | default "/tmp/semaphore/config" }}'
-  SEMAPHORE_TMP_PATH: '{{ .Values.extraConfigMap.configPath | default "/tmp/semaphore" }}'
-  SEMAPHORE_PLAYBOOK_PATH: '{{ .Values.extraConfigMap.playbookPath | default "/tmp/semaphore/playbook" }}'
+  SEMAPHORE_PORT: '{{ .Values.extraConfigMap.appPort | default "3000" }}'
+  SEMAPHORE_TMP_PATH: '{{ .Values.extraConfigMap.tmpPath | default "/semaphore/tmp" }}'
+  SEMAPHORE_GIT_CLIENT: '{{ .Values.extraConfigMap.gitClient | default "cmd_git" }}'
+  MAX_TASK_DURATION_SEC: '{{ .Values.extraConfigMap.maxTaskDurationSec | default "" }}'
+  SEMAPHORE_MAX_PARALLEL_TASKS: '{{ .Values.extraConfigMap.maxParrallelTasks | default "" }}'
+  SEMAPHORE_PASSWORD_LOGIN_DISABLED: '{{ .Values.extraConfigMap.passwordLoginDisabled | default "False" }}'
+{{- if .Values.extraConfigMap.useRemoteRunner }}
+  SEMAPHORE_USE_REMOTE_RUNNER: '{{ .Values.extraConfigMap.useRemoteRunner | default "True" }}'
+  SEMAPHORE_RUNNER_REGISTRATION_TOKEN: '{{ .Values.extraConfigMap.runnerRegistrationToken | default "" }}'
+{{- end }}
+  SEMAPHORE_NON_ADMIN_CAN_CREATE_PROJECT: '{{ .Values.extraConfigMap.nonAdminCanCreateProject | default "False" }}'
+  ANSIBLE_HOST_KEY_CHECKING: '{{ .Values.extraConfigMap.ansibleHostKeyChecking | default "True" }}'
+{{- if .Values.extraConfigMap.telegramAlert }}
+  SEMAPHORE_TELEGRAM_ALERT: '{{ .Values.extraConfigMap.telegramAlert | default "False" }}'
+  SEMAPHORE_TELEGRAM_CHAT: '{{ .Values.extraConfigMap.telegramChat | default "" }}'
+{{- end }}
+{{- if .Values.extraConfigMap.emailAlert }}
+  SEMAPHORE_EMAIL_ALERT: '{{ .Values.extraConfigMap.emailAlert | default "False" }}'
+  SEMAPHORE_EMAIL_SENDER: '{{ .Values.extraConfigMap.emailSender | default "admin@localhost" }}'
+  SEMAPHORE_EMAIL_HOST: '{{ .Values.extraConfigMap.emailHost | default "admin@localhost" }}'
+  SEMAPHORE_EMAIL_PORT: '{{ .Values.extraConfigMap.emailPort | default "25" }}'
+  SEMAPHORE_EMAIL_USERNAME: '{{ .Values.extraConfigMap.emailUsername | default "admin@localhost" }}'
+  SEMAPHORE_EMAIL_SECURE: '{{ .Values.extraConfigMap.emailSecure | default "False" }}'
+{{- end }}
   SEMAPHORE_DB_USER: '{{ .Values.extraConfigMap.dbUser | default "semaphore" }}'
   SEMAPHORE_DB_HOST: '{{ .Values.extraConfigMap.dbHost | default "postgres" }}'
   SEMAPHORE_DB_PORT: '{{ .Values.extraConfigMap.dbPort | default "5432" }}'
   SEMAPHORE_DB_DIALECT: '{{ .Values.extraConfigMap.dbDialect | default "postgres" }}'
   SEMAPHORE_DB: '{{ .Values.extraConfigMap.dbName | default "postgres" }}'
-  SEMAPHORE_ADMIN_NAME: '{{ .Values.extraConfigMap.adminNickName | default "SemaphoreAdmin" }}'
+  SEMAPHORE_ADMIN_NAME: '{{ .Values.extraConfigMap.adminNickName | default "Admin" }}'
   SEMAPHORE_ADMIN_EMAIL: '{{ .Values.extraConfigMap.adminEmail | default "admin@localhost" }}'
   SEMAPHORE_ADMIN: '{{ .Values.extraConfigMap.loginAdmin | default "admin" }}'
-  SEMAPHORE_LDAP_ACTIVATED: '{{ .Values.extraConfigMap.ldapActivated | default "no" }}'
-{{- if .Values.extraConfigMap.ldapActivated }}
-  SEMAPHORE_LDAP_HOST: '{{ .Values.extraConfigMap.ldapHost | default "dc01.local.example.com" }}'
-  SEMAPHORE_LDAP_PORT: '{{ .Values.extraConfigMap.ldapPort | default "636" }}'
-  SEMAPHORE_LDAP_NEEDTLS: '{{ .Values.extraConfigMap.ldapNeedTls | default "yes" }}'
-  SEMAPHORE_LDAP_DN_BIND: '{{ .Values.extraConfigMap.ldapDnBind | default "uid=bind_user,cn=users,cn=accounts,dc=local,dc=shiftsystems,dc=net" }}'
-  SEMAPHORE_LDAP_DN_SEARCH: '{{ .Values.extraConfigMap.ldapDnSearch | default "dc=local,dc=example,dc=com" }}'
+{{- if .Values.extraConfigMap.ldapEnable }}
+  SEMAPHORE_LDAP_ENABLE: '{{ .Values.extraConfigMap.ldapEnable | default "True" }}'
+  SEMAPHORE_LDAP_SERVER: '{{ .Values.extraConfigMap.ldapServer | default "ldaps://ldap.example.com:636" }}'
+  SEMAPHORE_LDAP_BIND_DN: '{{ .Values.extraConfigMap.ldapBindDn | default "uid=ldap_user,cn=users,dc=example,dc=com" }}'
+  SEMAPHORE_LDAP_SEARCH_DN: '{{ .Values.extraConfigMap.ldapSearchDn | default "uid=ldap_user,cn=users,dc=example,dc=com" }}'
   SEMAPHORE_LDAP_SEARCH_FILTER: '{{ .Values.extraConfigMap.ldapSearchFilter | default "(\u0026(uid=%s)(memberOf=cn=ipausers,cn=groups,cn=accounts,dc=local,dc=example,dc=com))" }}'
-  SEMAPHORE_LDAP_MAPPING_EMAIL: '{{ .Values.extraConfigMap.ldapMappingEmail | default "mail" }}'
-  SEMAPHORE_LDAP_MAPPING_USERNAME: '{{ .Values.extraConfigMap.ldapMappingUsername | default "sAMAccountName" }}'
-  SEMAPHORE_LDAP_MAPPING_FULLNAME: '{{ .Values.extraConfigMap.ldapMappingFullname | default "displayName" }}'
+  SEMAPHORE_LDAP_NEEDTLS: '{{ .Values.extraConfigMap.ldapNeedTls | default "True" }}'
+  SEMAPHORE_LDAP_MAPPING_DN: '{{ .Values.extraConfigMap.ldapMappingDn | default "displayName" }}'
+  SEMAPHORE_LDAP_MAPPING_MAIL: '{{ .Values.extraConfigMap.ldapMappingMail | default "mail" }}'
+  SEMAPHORE_LDAP_MAPPING_UID: '{{ .Values.extraConfigMap.ldapMappingUid | default "sAMAccountName" }}'
+  SEMAPHORE_LDAP_MAPPING_CN: '{{ .Values.extraConfigMap.ldapMappingCn | default "cn" }}'
 {{- end }}
