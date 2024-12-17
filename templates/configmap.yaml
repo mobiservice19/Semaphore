@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: semaphore-configmap
-  namespace: {{ .Values.namespace | default .Chart.Name }}
   labels:
     {{- include "semaphore.labels" . | nindent 4 }}
 data:
